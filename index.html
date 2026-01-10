@@ -1,774 +1,95 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<title>Trade Calculator - Hogyoku Based</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<title>Advanced Trade Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-* { 
-  box-sizing: border-box; 
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-  background: linear-gradient(135deg, #0a0e1a, #141b2d);
-  color: #e5e7eb;
-  min-height: 100vh;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.container {
-  max-width: 1400px;
-  width: 100%;
-}
-
-header {
-  text-align: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-h1 {
-  font-size: 2.8rem;
-  background: linear-gradient(90deg, #38bdf8, #22c55e);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  color: #94a3b8;
-  font-size: 1.1rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.trade-container {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 30px;
-  margin-bottom: 40px;
-}
-
-.side {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.side:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-}
-
-.side-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.side h2 {
-  font-size: 1.8rem;
-  color: #38bdf8;
-}
-
-.side.your-side h2 {
-  color: #22c55e;
-}
-
-.side-controls {
-  display: flex;
-  gap: 10px;
-}
-
-.control-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
-}
-
-.control-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
-}
-
-.slots {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.slot {
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 12px;
-  padding: 15px;
-  border: 2px solid #334155;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.slot:hover {
-  border-color: #38bdf8;
-  transform: translateY(-2px);
-}
-
-.slot-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.slot-index {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-
-.delete-btn {
-  background: rgba(239, 68, 68, 0.2);
-  border: none;
-  color: #ef4444;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.delete-btn:hover {
-  background: rgba(239, 68, 68, 0.4);
-}
-
-select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: rgba(2, 8, 23, 0.8);
-  color: #e5e7eb;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-select:hover {
-  background: rgba(2, 8, 23, 1);
-}
-
-select:focus {
-  outline: 2px solid #38bdf8;
-}
-
-.item-value {
-  margin-top: 10px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  text-align: center;
-  font-weight: bold;
-  color: #fbbf24;
-  font-size: 1.1rem;
-}
-
-.side-total {
-  margin-top: 20px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.total-label {
-  font-size: 1.2rem;
-  color: #94a3b8;
-}
-
-.total-value {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #22c55e;
-}
-
-.vs-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-.vs-circle {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #38bdf8, #22c55e);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  font-weight: bold;
-  box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
-}
-
-.swap-btn {
-  background: linear-gradient(135deg, #f59e0b, #fbbf24);
-  border: none;
-  color: #0a0e1a;
-  padding: 15px 25px;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.3s ease;
-}
-
-.swap-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
-}
-
-.result-container {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 30px;
-  margin-top: 30px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
-}
-
-.result-title {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  color: #94a3b8;
-}
-
-.result-value {
-  font-size: 3.5rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-.result-message {
-  font-size: 1.3rem;
-  color: #94a3b8;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.win-side {
-  color: #22c55e;
-  text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
-}
-
-.lose-side {
-  color: #ef4444;
-  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-}
-
-.fair-trade {
-  color: #38bdf8;
-  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-}
-
-.win-badge {
-  display: inline-block;
-  background: #22c55e;
-  color: white;
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-left: 10px;
-}
-
-.lose-badge {
-  display: inline-block;
-  background: #ef4444;
-  color: white;
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-left: 10px;
-}
-
-.fair-badge {
-  display: inline-block;
-  background: #38bdf8;
-  color: white;
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-left: 10px;
-}
-
-.item-options {
-  margin-top: 30px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.item-options h3 {
-  font-size: 1.8rem;
-  color: #38bdf8;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-}
-
-.option-item {
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 12px;
-  padding: 15px;
-  border: 1px solid #334155;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.option-name {
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.option-value {
-  color: #fbbf24;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-@media (max-width: 1100px) {
-  .trade-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-  }
-  
-  .vs-section {
-    grid-row: 2;
-    flex-direction: row;
-    justify-content: center;
-    margin: 20px 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .slots {
-    grid-template-columns: 1fr;
-  }
-  
-  h1 {
-    font-size: 2.2rem;
-  }
-  
-  .result-value {
-    font-size: 2.5rem;
-    flex-direction: column;
-    gap: 10px;
-  }
-}
+*{box-sizing:border-box;font-family:Segoe UI,Arial,sans-serif}
+body{margin:0;background:linear-gradient(135deg,#020617,#0f172a);color:#e5e7eb;padding:20px}
+h1{text-align:center;margin-bottom:20px}
+.trade-container{max-width:1200px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.side{background:rgba(255,255,255,0.06);border-radius:18px;padding:20px;box-shadow:0 15px 30px rgba(0,0,0,.45)}
+.side h2{text-align:center;margin-bottom:10px}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.slot{background:#020617;border-radius:12px;padding:10px;border:1px solid #334155}
+select{width:100%;padding:8px;border-radius:8px;border:none;background:#020617;color:#e5e7eb}
+.value{margin-top:4px;font-size:.85em;color:#94a3b8;text-align:center}
+.controls{display:flex;gap:10px;margin-top:12px}
+button{flex:1;padding:10px;border:none;border-radius:10px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;transition:.2s}
+button:hover{background:#1d4ed8;transform:scale(1.03)}
+.total{text-align:center;margin-top:12px;font-size:1.2em;font-weight:bold}
+.result{text-align:center;margin-top:30px;font-size:1.6em;font-weight:bold}
+.win{color:#22c55e}.lose{color:#ef4444}.even{color:#38bdf8}
+@media(max-width:900px){.trade-container{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1><i class="fas fa-exchange-alt"></i> Trade Calculator</h1>
-    <p class="subtitle">Calcule o valor de trades baseados em Hogyoku. Compare ofertas e veja quem está em vantagem com indicadores W (Win) e L (Lose).</p>
-  </header>
-
-  <div class="trade-container">
-    <!-- Seu Trade (Lado Esquerdo) -->
-    <div class="side your-side">
-      <div class="side-header">
-        <h2><i class="fas fa-user"></i> Seu Trade</h2>
-        <div class="side-controls">
-          <button class="control-btn" id="addSlotA" title="Adicionar item">
-            <i class="fas fa-plus"></i>
-          </button>
-          <button class="control-btn" id="clearAllA" title="Limpar todos os itens">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-      
-      <div class="slots" id="slotsA">
-        <!-- Slots serão gerados por JavaScript -->
-      </div>
-      
-      <div class="side-total">
-        <div class="total-label">Valor Total:</div>
-        <div class="total-value">$ <span id="totalA">0</span></div>
-      </div>
-    </div>
-    
-    <!-- VS Section -->
-    <div class="vs-section">
-      <div class="vs-circle">VS</div>
-      <button class="swap-btn" id="swapTrades">
-        <i class="fas fa-random"></i> Trocar Trades
-      </button>
-    </div>
-    
-    <!-- Trade do Outro (Lado Direito) -->
-    <div class="side">
-      <div class="side-header">
-        <h2><i class="fas fa-user-friends"></i> Trade do Outro</h2>
-        <div class="side-controls">
-          <button class="control-btn" id="addSlotB" title="Adicionar item">
-            <i class="fas fa-plus"></i>
-          </button>
-          <button class="control-btn" id="clearAllB" title="Limpar todos os itens">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-      
-      <div class="slots" id="slotsB">
-        <!-- Slots serão gerados por JavaScript -->
-      </div>
-      
-      <div class="side-total">
-        <div class="total-label">Valor Total:</div>
-        <div class="total-value">$ <span id="totalB">0</span></div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Resultado -->
-  <div class="result-container">
-    <div class="result-title">Resultado do Trade</div>
-    <div class="result-value" id="resultValue">
-      <!-- Resultado será preenchido por JavaScript -->
-    </div>
-    <div class="result-message" id="resultMessage">
-      <!-- Mensagem será preenchida por JavaScript -->
-    </div>
-  </div>
-  
-  <!-- Opções de Itens -->
-  <div class="item-options">
-    <h3><i class="fas fa-gem"></i> Itens Disponíveis</h3>
-    <div class="options-grid" id="itemOptions">
-      <!-- Itens serão preenchidos por JavaScript -->
-    </div>
-  </div>
+<h1>💱 Advanced Trade Calculator</h1>
+<div class="trade-container">
+<div class="side">
+<h2>Lado Esquerdo</h2>
+<div class="slots" id="slotsA"></div>
+<div class="controls">
+<button onclick="clearSide('slotsA')">Limpar</button>
+<button onclick="duplicate('slotsA','slotsB')">Copiar →</button>
 </div>
-
+<div class="total">Total: <span id="totalA">0</span></div>
+</div>
+<div class="side">
+<h2>Lado Direito</h2>
+<div class="slots" id="slotsB"></div>
+<div class="controls">
+<button onclick="clearSide('slotsB')">Limpar</button>
+<button onclick="duplicate('slotsB','slotsA')">← Copiar</button>
+</div>
+<div class="total">Total: <span id="totalB">0</span></div>
+</div>
+</div>
+<div class="result" id="result"></div>
 <script>
-// Dados dos itens com valores baseados em Hogyoku
-const ITEMS = {
-  "": { name: "Selecionar Item", value: 0 },
-  "hogyoku_comum": { name: "Hogyoku Comum", value: 100 },
-  "hogyoku_raro": { name: "Hogyoku Raro", value: 250 },
-  "hogyoku_epico": { name: "Hogyoku Épico", value: 500 },
-  "hogyoku_lendario": { name: "Hogyoku Lendário", value: 1000 },
-  "fragmento_espiritual": { name: "Fragmento Espiritual", value: 50 },
-  "essencia_arcane": { name: "Essência Arcana", value: 150 },
-  "cristal_anima": { name: "Cristal de Anima", value: 300 },
-  "pedra_evolucao": { name: "Pedra da Evolução", value: 450 },
-  "selo_ancestral": { name: "Selo Ancestral", value: 600 },
-  "reliquia_perdida": { name: "Relíquia Perdida", value: 800 },
-  "orb_dimensional": { name: "Orb Dimensional", value: 1200 },
-  "essencia_celestial": { name: "Essência Celestial", value: 1500 },
-  "fragmento_temporal": { name: "Fragmento Temporal", value: 200 },
-  "runas_poder": { name: "Runas de Poder", value: 350 },
-  "lacrimas_fenix": { name: "Lágrimas de Fênix", value: 700 },
-  "nucleo_energia": { name: "Núcleo de Energia", value: 900 },
-  "escama_dragao": { name: "Escama de Dragão", value: 1100 },
-  "sangue_titam": { name: "Sangue de Titã", value: 1300 },
-  "coracao_elemental": { name: "Coração Elemental", value: 1600 }
-};
-
-// Inicialização dos slots
-let slotIdCounter = 0;
-const sides = {
-  A: { element: document.getElementById('slotsA'), totalElement: document.getElementById('totalA'), slots: [] },
-  B: { element: document.getElementById('slotsB'), totalElement: document.getElementById('totalB'), slots: [] }
-};
-
-// Inicializar com alguns slots
-function initialize() {
-  // Adiciona 2 slots em cada lado
-  addSlot('A');
-  addSlot('A');
-  addSlot('B');
-  addSlot('B');
-  
-  // Preenche a lista de itens disponíveis
-  populateItemOptions();
-  
-  // Atualiza os cálculos iniciais
-  updateTotals();
-}
-
-// Adicionar um novo slot
-function addSlot(side) {
-  const sideData = sides[side];
-  const slotId = `slot_${side}_${slotIdCounter++}`;
-  
-  const slotElement = document.createElement('div');
-  slotElement.className = 'slot';
-  slotElement.id = slotId;
-  
-  slotElement.innerHTML = `
-    <div class="slot-header">
-      <div class="slot-index">${sideData.slots.length + 1}</div>
-      <button class="delete-btn" data-side="${side}" data-id="${slotId}">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <select class="item-select" data-side="${side}">
-      ${Object.entries(ITEMS).map(([id, item]) => 
-        `<option value="${id}">${item.name}</option>`
-      ).join('')}
-    </select>
-    <div class="item-value">$ <span class="value-display">0</span></div>
-  `;
-  
-  sideData.element.appendChild(slotElement);
-  sideData.slots.push(slotId);
-  
-  // Adicionar event listeners
-  const select = slotElement.querySelector('.item-select');
-  select.addEventListener('change', function() {
-    updateItemValue(this);
-    updateTotals();
-  });
-  
-  const deleteBtn = slotElement.querySelector('.delete-btn');
-  deleteBtn.addEventListener('click', function() {
-    const side = this.getAttribute('data-side');
-    const id = this.getAttribute('data-id');
-    removeSlot(side, id);
-  });
-  
-  // Atualizar valores
-  updateItemValue(select);
-  updateTotals();
-}
-
-// Remover um slot
-function removeSlot(side, slotId) {
-  const sideData = sides[side];
-  const slotIndex = sideData.slots.indexOf(slotId);
-  
-  if (slotIndex > -1) {
-    sideData.slots.splice(slotIndex, 1);
-    document.getElementById(slotId).remove();
-    
-    // Reindexar os slots restantes
-    const slotElements = sideData.element.querySelectorAll('.slot');
-    slotElements.forEach((slot, index) => {
-      slot.querySelector('.slot-index').textContent = index + 1;
-    });
-    
-    updateTotals();
-  }
-}
-
-// Atualizar valor de um item individual
-function updateItemValue(selectElement) {
-  const selectedValue = ITEMS[selectElement.value].value;
-  const valueDisplay = selectElement.parentNode.querySelector('.value-display');
-  valueDisplay.textContent = selectedValue;
-}
-
-// Atualizar totais e resultado
-function updateTotals() {
-  let totalA = 0;
-  let totalB = 0;
-  
-  // Calcular total do lado A
-  const selectsA = document.querySelectorAll('#slotsA .item-select');
-  selectsA.forEach(select => {
-    totalA += ITEMS[select.value].value;
-  });
-  
-  // Calcular total do lado B
-  const selectsB = document.querySelectorAll('#slotsB .item-select');
-  selectsB.forEach(select => {
-    totalB += ITEMS[select.value].value;
-  });
-  
-  // Atualizar displays
-  sides.A.totalElement.textContent = totalA.toLocaleString();
-  sides.B.totalElement.textContent = totalB.toLocaleString();
-  
-  // Calcular resultado
-  calculateResult(totalA, totalB);
-}
-
-// Calcular e exibir resultado
-function calculateResult(totalA, totalB) {
-  const resultValueElement = document.getElementById('resultValue');
-  const resultMessageElement = document.getElementById('resultMessage');
-  
-  let resultHTML = '';
-  let message = '';
-  
-  if (totalA === totalB) {
-    // Trade justo
-    resultHTML = `
-      <span class="fair-trade">$ ${totalA.toLocaleString()}</span>
-      <span class="fair-badge">FAIR</span>
-      <span class="fair-trade">$ ${totalB.toLocaleString()}</span>
-    `;
-    message = 'Este trade é justo! Ambos os lados oferecem valores equivalentes.';
-  } else if (totalA > totalB) {
-    // Lado A tem vantagem (W para A, L para B)
-    const difference = totalA - totalB;
-    resultHTML = `
-      <span class="win-side">$ ${totalA.toLocaleString()} <span class="win-badge">W</span></span>
-      <i class="fas fa-arrow-right"></i>
-      <span class="lose-side">$ ${totalB.toLocaleString()} <span class="lose-badge">L</span></span>
-    `;
-    message = `O lado ESQUERDO está em vantagem! Diferença: $ ${difference.toLocaleString()}`;
-  } else {
-    // Lado B tem vantagem (L para A, W para B)
-    const difference = totalB - totalA;
-    resultHTML = `
-      <span class="lose-side">$ ${totalA.toLocaleString()} <span class="lose-badge">L</span></span>
-      <i class="fas fa-arrow-right"></i>
-      <span class="win-side">$ ${totalB.toLocaleString()} <span class="win-badge">W</span></span>
-    `;
-    message = `O lado DIREITO está em vantagem! Diferença: $ ${difference.toLocaleString()}`;
-  }
-  
-  resultValueElement.innerHTML = resultHTML;
-  resultMessageElement.textContent = message;
-}
-
-// Trocar trades entre os lados
-function swapTrades() {
-  // Coletar itens do lado A
-  const selectsA = document.querySelectorAll('#slotsA .item-select');
-  const itemsA = Array.from(selectsA).map(select => select.value);
-  
-  // Coletar itens do lado B
-  const selectsB = document.querySelectorAll('#slotsB .item-select');
-  const itemsB = Array.from(selectsB).map(select => select.value);
-  
-  // Limpar todos os slots
-  clearAllSlots('A');
-  clearAllSlots('B');
-  
-  // Adicionar slots com os itens trocados
-  itemsB.forEach(itemId => {
-    addSlot('A');
-    const newSelect = sides.A.element.lastElementChild.querySelector('.item-select');
-    newSelect.value = itemId;
-    updateItemValue(newSelect);
-  });
-  
-  itemsA.forEach(itemId => {
-    addSlot('B');
-    const newSelect = sides.B.element.lastElementChild.querySelector('.item-select');
-    newSelect.value = itemId;
-    updateItemValue(newSelect);
-  });
-  
-  updateTotals();
-}
-
-// Limpar todos os slots de um lado
-function clearAllSlots(side) {
-  const sideData = sides[side];
-  sideData.slots = [];
-  sideData.element.innerHTML = '';
-}
-
-// Preencher a lista de itens disponíveis
-function populateItemOptions() {
-  const container = document.getElementById('itemOptions');
-  container.innerHTML = '';
-  
-  // Ordenar itens por valor
-  const sortedItems = Object.entries(ITEMS)
-    .filter(([id, item]) => id !== "") // Remover o item vazio
-    .sort((a, b) => b[1].value - a[1].value);
-  
-  sortedItems.forEach(([id, item]) => {
-    const optionElement = document.createElement('div');
-    optionElement.className = 'option-item';
-    optionElement.innerHTML = `
-      <div class="option-name">${item.name}</div>
-      <div class="option-value">$ ${item.value.toLocaleString()}</div>
-    `;
-    container.appendChild(optionElement);
-  });
-}
-
-// Event Listeners
-document.getElementById('addSlotA').addEventListener('click', () => addSlot('A'));
-document.getElementById('addSlotB').addEventListener('click', () => addSlot('B'));
-
-document.getElementById('clearAllA').addEventListener('click', () => {
-  clearAllSlots('A');
-  updateTotals();
-});
-
-document.getElementById('clearAllB').addEventListener('click', () => {
-  clearAllSlots('B');
-  updateTotals();
-});
-
-document.getElementById('swapTrades').addEventListener('click', swapTrades);
-
-// Inicializar a aplicação
-initialize();
-</script>
-</body>
-</html>
+const ITEMS={
+"None":0,
+"Cheese Burger":25000,
+"Alucard Bag":28000,
+"Duo Strongest Bundle":4550,
+"Limited Time Bundle":3900,
+"Asta Bag":3600,
+"Cid Kagenou Bag":2900,
+"Starrail Bundle":2700,
+"Kaneki Bundle":2650,
+"Qin Shi Bag":2600,
+"Jin Mori Bag":2400,
+"OFA Bag":2350,
+"Banner Bundle":2300,
+"Kafka Bag":2100,
+"Garou Bag":2100,
+"Todoroki Bag":1900,
+"Yuta Bag":1700,
+"Strongest Bundle":1700,
+"Master Bundle":1700,
+"Starter Pack":1550,
+"Aizen Bag":1500,
+"Solemn Lament Bag":1350,
+"Metal Bat Bag":1300,
+"2x Drop Gamepass":1150,
+"Shigaraki Bag":1125,
+"Sukuna Bag":1125,
+"Tanjiro Bag":1100,
+"Gojo Bag":1100,
+"Akaza Bag":1100,
+"2x Luck Gamepass":1025,
+"Potions Bundle":1000,
+"Asta Set (full materials)":575,
+"Shadow Kagenou Set (full materials)":450,
+"2x Gems Gamepass":375,
+"Jin Mori Set (full materials)":375,
+"Starter Bundle":375,
+"Kaneki Set (full materials)":325,
+"Kafka Set (full materials)":260,
+"Rank Up Set":275,
+"2x Money Gamepass":190,
+"2x EXP Gamepass":110,
+"Anti-Magi Grimorie":108,
+"Shigaraki Set (full materials)":60,
+"Garou Set (full materials)":45,
