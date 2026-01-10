@@ -1,54 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Advanced Trade Calculator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<title>Rogue Piece Trade Calculator</title>
 <style>
-*{box-sizing:border-box;font-family:Segoe UI,Arial,sans-serif}
-body{margin:0;background:linear-gradient(135deg,#020617,#0f172a);color:#e5e7eb;padding:20px}
-h1{text-align:center;margin-bottom:20px}
-.trade-container{max-width:1200px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:30px}
-.side{background:rgba(255,255,255,0.06);border-radius:18px;padding:20px;box-shadow:0 15px 30px rgba(0,0,0,.45)}
-.side h2{text-align:center;margin-bottom:10px}
-.slots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.slot{background:#020617;border-radius:12px;padding:10px;border:1px solid #334155}
-select{width:100%;padding:8px;border-radius:8px;border:none;background:#020617;color:#e5e7eb}
-.value{margin-top:4px;font-size:.85em;color:#94a3b8;text-align:center}
-.controls{display:flex;gap:10px;margin-top:12px}
-button{flex:1;padding:10px;border:none;border-radius:10px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;transition:.2s}
-button:hover{background:#1d4ed8;transform:scale(1.03)}
-.total{text-align:center;margin-top:12px;font-size:1.2em;font-weight:bold}
-.result{text-align:center;margin-top:30px;font-size:1.6em;font-weight:bold}
-.win{color:#22c55e}.lose{color:#ef4444}.even{color:#38bdf8}
-@media(max-width:900px){.trade-container{grid-template-columns:1fr}}
+body { background:#0f1220; color:#fff; font-family:Arial; margin:0; padding:20px; }
+h1 { text-align:center; }
+.container { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; }
+.side { background:#171a2e; padding:15px; border-radius:12px; width:360px; box-shadow:0 0 15px #000; }
+.side h2 { text-align:center; }
+.slots { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.slot { background:#22264a; padding:8px; border-radius:8px; display:flex; flex-direction:column; gap:5px; }
+.slot button { cursor:pointer; border:none; border-radius:6px; padding:6px; }
+.add { background:#2ecc71; }
+.remove { background:#e74c3c; }
+.item-value { font-size:12px; opacity:0.8; }
+.items-panel { margin-top:15px; max-height:200px; overflow:auto; background:#111; padding:10px; border-radius:10px; }
+.items-panel button { width:100%; margin-bottom:6px; background:#2d325f; color:#fff; border:none; border-radius:6px; padding:6px; cursor:pointer; }
+.result { text-align:center; font-size:22px; margin-top:20px; }
+.win { color:#2ecc71; }
+.loss { color:#e74c3c; }
 </style>
 </head>
 <body>
-<h1>💱 Advanced Trade Calculator</h1>
-<div class="trade-container">
-<div class="side">
-<h2>Lado Esquerdo</h2>
-<div class="slots" id="slotsA"></div>
-<div class="controls">
-<button onclick="clearSide('slotsA')">Limpar</button>
-<button onclick="duplicate('slotsA','slotsB')">Copiar →</button>
+<h1>Trade Calculator</h1>
+
+
+<div class="container">
+<div class="side" id="left">
+<h2>LEFT</h2>
+<div class="slots" id="leftSlots"></div>
+<div class="items-panel" id="leftItems"></div>
+<p>Total: <span id="leftTotal">0</span></p>
 </div>
-<div class="total">Total: <span id="totalA">0</span></div>
-</div>
-<div class="side">
-<h2>Lado Direito</h2>
-<div class="slots" id="slotsB"></div>
-<div class="controls">
-<button onclick="clearSide('slotsB')">Limpar</button>
-<button onclick="duplicate('slotsB','slotsA')">← Copiar</button>
-</div>
-<div class="total">Total: <span id="totalB">0</span></div>
+
+
+<div class="side" id="right">
+<h2>RIGHT</h2>
+<div class="slots" id="rightSlots"></div>
+<div class="items-panel" id="rightItems"></div>
+<p>Total: <span id="rightTotal">0</span></p>
 </div>
 </div>
+
+
 <div class="result" id="result"></div>
+
+
 <script>
-const ITEMS={
+const ITEMS = {
 "None":0,
 "Cheese Burger":25000,
 "Alucard Bag":28000,
@@ -69,27 +69,15 @@ const ITEMS={
 "Strongest Bundle":1700,
 "Master Bundle":1700,
 "Starter Pack":1550,
-"Aizen Bag":1500,
-"Solemn Lament Bag":1350,
-"Metal Bat Bag":1300,
-"2x Drop Gamepass":1150,
-"Shigaraki Bag":1125,
-"Sukuna Bag":1125,
-"Tanjiro Bag":1100,
-"Gojo Bag":1100,
-"Akaza Bag":1100,
-"2x Luck Gamepass":1025,
-"Potions Bundle":1000,
-"Asta Set (full materials)":575,
-"Shadow Kagenou Set (full materials)":450,
-"2x Gems Gamepass":375,
-"Jin Mori Set (full materials)":375,
-"Starter Bundle":375,
-"Kaneki Set (full materials)":325,
-"Kafka Set (full materials)":260,
-"Rank Up Set":275,
-"2x Money Gamepass":190,
-"2x EXP Gamepass":110,
-"Anti-Magi Grimorie":108,
-"Shigaraki Set (full materials)":60,
-"Garou Set (full materials)":45,
+"Aizen Bag":1500
+};
+
+
+const SLOT_COUNT = 6;
+const state = { left: Array(SLOT_COUNT).fill(null), right: Array(SLOT_COUNT).fill(null) };
+
+
+function renderSlots(side) {
+const box = document.getElementById(side + 'Slots');
+box.innerHTML = '';
+</html>
