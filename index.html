@@ -5,79 +5,214 @@
 <title>Rogue Piece Trade Calculator</title>
 <style>
 body { background:#0f1220; color:#fff; font-family:Arial; margin:0; padding:20px; }
-h1 { text-align:center; }
+h1 { text-align:center; margin-bottom:30px; }
 .container { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; }
-.side { background:#171a2e; padding:15px; border-radius:12px; width:360px; box-shadow:0 0 15px #000; }
-.side h2 { text-align:center; }
-.slots { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-.slot { background:#22264a; padding:8px; border-radius:8px; display:flex; flex-direction:column; gap:5px; }
-.slot button { cursor:pointer; border:none; border-radius:6px; padding:6px; }
-.add { background:#2ecc71; }
-.remove { background:#e74c3c; }
-.item-value { font-size:12px; opacity:0.8; }
-.items-panel { margin-top:15px; max-height:200px; overflow:auto; background:#111; padding:10px; border-radius:10px; }
-.items-panel button { width:100%; margin-bottom:6px; background:#2d325f; color:#fff; border:none; border-radius:6px; padding:6px; cursor:pointer; }
-.result { text-align:center; font-size:22px; margin-top:20px; }
+.side { background:#171a2e; padding:20px; border-radius:12px; width:400px; box-shadow:0 0 15px #000; }
+.side h2 { text-align:center; margin-top:0; }
+.slots { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px; }
+.slot { background:#22264a; padding:10px; border-radius:8px; display:flex; flex-direction:column; gap:8px; }
+.slot strong { font-size:14px; text-align:center; }
+.item-value { font-size:12px; opacity:0.8; text-align:center; }
+.remove-btn { cursor:pointer; border:none; border-radius:6px; padding:6px; background:#e74c3c; color:white; font-weight:bold; }
+.remove-btn:hover { background:#c0392b; }
+.items-panel { margin-top:15px; max-height:250px; overflow:auto; background:#111; padding:10px; border-radius:10px; }
+.items-panel button { width:100%; margin-bottom:8px; background:#2d325f; color:#fff; border:none; border-radius:6px; padding:8px; cursor:pointer; font-size:12px; text-align:left; }
+.items-panel button:hover { background:#3a407a; }
+.total { font-size:18px; font-weight:bold; text-align:center; margin:15px 0; }
+.controls { margin-top:15px; text-align:center; }
+.controls button { margin:0 5px; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; background:#2563eb; color:white; font-weight:bold; }
+.controls button:hover { background:#1d4ed8; }
+.controls button.clear { background:#e74c3c; }
+.controls button.clear:hover { background:#c0392b; }
+.result { text-align:center; font-size:24px; margin-top:30px; font-weight:bold; padding:15px; border-radius:10px; background:#1a1d35; }
 .win { color:#2ecc71; }
 .loss { color:#e74c3c; }
+.even { color:#3498db; }
 </style>
 </head>
 <body>
-<h1>Trade Calculator</h1>
-
+<h1>Rogue Piece Trade Calculator</h1>
 
 <div class="container">
 <div class="side" id="left">
-<h2>LEFT</h2>
+<h2>LEFT SIDE</h2>
 <div class="slots" id="leftSlots"></div>
+<p class="total">Total: <span id="leftTotal">0</span></p>
+<h3>Add Items:</h3>
 <div class="items-panel" id="leftItems"></div>
-<p>Total: <span id="leftTotal">0</span></p>
+<div class="controls">
+<button onclick="clearSide('left')" class="clear">Clear All</button>
+<button onclick="copyToOtherSide('left')">Copy to Right →</button>
 </div>
-
+</div>
 
 <div class="side" id="right">
-<h2>RIGHT</h2>
+<h2>RIGHT SIDE</h2>
 <div class="slots" id="rightSlots"></div>
+<p class="total">Total: <span id="rightTotal">0</span></p>
+<h3>Add Items:</h3>
 <div class="items-panel" id="rightItems"></div>
-<p>Total: <span id="rightTotal">0</span></p>
+<div class="controls">
+<button onclick="clearSide('right')" class="clear">Clear All</button>
+<button onclick="copyToOtherSide('right')">← Copy to Left</button>
 </div>
 </div>
+</div>
 
-
-<div class="result" id="result"></div>
-
+<div class="result" id="result">EVEN TRADE</div>
 
 <script>
 const ITEMS = {
-"None":0,
-"Cheese Burger":25000,
-"Alucard Bag":28000,
-"Duo Strongest Bundle":4550,
-"Limited Time Bundle":3900,
-"Asta Bag":3600,
-"Cid Kagenou Bag":2900,
-"Starrail Bundle":2700,
-"Kaneki Bundle":2650,
-"Qin Shi Bag":2600,
-"Jin Mori Bag":2400,
-"OFA Bag":2350,
-"Banner Bundle":2300,
-"Kafka Bag":2100,
-"Garou Bag":2100,
-"Todoroki Bag":1900,
-"Yuta Bag":1700,
-"Strongest Bundle":1700,
-"Master Bundle":1700,
-"Starter Pack":1550,
-"Aizen Bag":1500
+"None": 0,
+"Cheese Burger": 25000,
+"Alucard Bag": 28000,
+"Duo Strongest Bundle": 4550,
+"Limited Time Bundle": 3900,
+"Asta Bag": 3600,
+"Cid Kagenou Bag": 2900,
+"Starrail Bundle": 2700,
+"Kaneki Bundle": 2650,
+"Qin Shi Bag": 2600,
+"Jin Mori Bag": 2400,
+"OFA Bag": 2350,
+"Banner Bundle": 2300,
+"Kafka Bag": 2100,
+"Garou Bag": 2100,
+"Todoroki Bag": 1900,
+"Yuta Bag": 1700,
+"Strongest Bundle": 1700,
+"Master Bundle": 1700,
+"Starter Pack": 1550,
+"Aizen Bag": 1500,
+"Solemn Lament Bag": 1350,
+"Metal Bat Bag": 1300,
+"2x Drop Gamepass": 1150,
+"Shigaraki Bag": 1125,
+"Sukuna Bag": 1125,
+"Tanjiro Bag": 1100,
+"Gojo Bag": 1100,
+"Akaza Bag": 1100,
+"2x Luck Gamepass": 1025,
+"Potions Bundle": 1000,
+"Asta Set (full materials)": 575,
+"Shadow Kagenou Set (full materials)": 450,
+"2x Gems Gamepass": 375,
+"Jin Mori Set (full materials)": 375,
+"Starter Bundle": 375,
+"Kaneki Set (full materials)": 325,
+"Kafka Set (full materials)": 260,
+"Rank Up Set": 275,
+"2x Money Gamepass": 190,
+"2x EXP Gamepass": 110,
+"Anti-Magi Grimorie": 108,
+"Shigaraki Set (full materials)": 60,
+"Garou Set (full materials)": 45
 };
 
-
-const SLOT_COUNT = 6;
-const state = { left: Array(SLOT_COUNT).fill(null), right: Array(SLOT_COUNT).fill(null) };
-
+const SLOT_COUNT = 8;
+const state = {
+    left: Array(SLOT_COUNT).fill(null),
+    right: Array(SLOT_COUNT).fill(null)
+};
 
 function renderSlots(side) {
-const box = document.getElementById(side + 'Slots');
-box.innerHTML = '';
+    const box = document.getElementById(side + 'Slots');
+    box.innerHTML = '';
+    
+    state[side].forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'slot';
+        
+        if (item) {
+            div.innerHTML = `
+                <strong>${item}</strong>
+                <span class="item-value">Value: ${ITEMS[item].toLocaleString()}</span>
+                <button class="remove-btn" onclick="removeItem('${side}', ${i})">Remove</button>
+            `;
+        } else {
+            div.innerHTML = `
+                <strong>Empty Slot</strong>
+                <span class="item-value">Value: 0</span>
+                <button class="remove-btn" disabled style="background:#666;">Remove</button>
+            `;
+        }
+        
+        box.appendChild(div);
+    });
+}
+
+function renderItems(side) {
+    const panel = document.getElementById(side + 'Items');
+    panel.innerHTML = '';
+    
+    Object.entries(ITEMS).forEach(([name, value]) => {
+        if (name === "None") return;
+        
+        const btn = document.createElement('button');
+        btn.textContent = `${name} (${value.toLocaleString()})`;
+        btn.onclick = () => addItem(side, name);
+        panel.appendChild(btn);
+    });
+}
+
+function addItem(side, itemName) {
+    const emptyIndex = state[side].findIndex(slot => slot === null);
+    if (emptyIndex !== -1) {
+        state[side][emptyIndex] = itemName;
+        update();
+    } else {
+        alert('All slots are full! Remove an item first.');
+    }
+}
+
+function removeItem(side, index) {
+    state[side][index] = null;
+    update();
+}
+
+function clearSide(side) {
+    state[side] = Array(SLOT_COUNT).fill(null);
+    update();
+}
+
+function copyToOtherSide(fromSide) {
+    const toSide = fromSide === 'left' ? 'right' : 'left';
+    state[toSide] = [...state[fromSide]];
+    update();
+}
+
+function total(side) {
+    return state[side].reduce((sum, item) => sum + (item ? ITEMS[item] : 0), 0);
+}
+
+function update() {
+    renderSlots('left');
+    renderSlots('right');
+    
+    const leftTotal = total('left');
+    const rightTotal = total('right');
+    
+    document.getElementById('leftTotal').textContent = leftTotal.toLocaleString();
+    document.getElementById('rightTotal').textContent = rightTotal.toLocaleString();
+    
+    const diff = leftTotal - rightTotal;
+    const resultEl = document.getElementById('result');
+    
+    if (diff > 0) {
+        resultEl.innerHTML = `<span class='win'>LEFT WINS by ${diff.toLocaleString()}</span>`;
+    } else if (diff < 0) {
+        resultEl.innerHTML = `<span class='loss'>RIGHT WINS by ${Math.abs(diff).toLocaleString()}</span>`;
+    } else {
+        resultEl.innerHTML = `<span class='even'>EVEN TRADE</span>`;
+    }
+}
+
+// Initialize
+['left', 'right'].forEach(side => {
+    renderItems(side);
+    renderSlots(side);
+});
+update();
+</script>
+</body>
 </html>
